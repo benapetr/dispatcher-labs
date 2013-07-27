@@ -9,12 +9,15 @@
 //  GNU General Public License for more details.
 
 using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading;
 
 namespace dispatcherd
 {
-	public class Class
+	public class IRC
 	{
-		public Class ()
+		public IRC ()
 		{
 		}
 	}
