@@ -1,0 +1,59 @@
+#!/usr/bin/python
+
+# interface for dispatcher
+
+import argparse
+import sys
+import socket
+
+# we define a new class for every function of parser... poor python
+
+class Subscribe(argparse.Action):
+    def __call__ (self, parser, namespace, values, option_string=None):
+        print "Attempting to create new subscription " + values
+        _socket = socket.socket()
+# why the fuck we need to use double (( wtf ))
+        _socket.connect((DispatcherHost, DispatcherPort))
+        _socket.send("subscribe " + values + "\n")
+# no ReadLine? Poor python
+        print _socket.recv(256);
+        _socket.close()
+        sys.exit(0)
+
+class unSubscribe(argparse.Action):
+    def __call__ (self, parser, namespace, values, option_string=None):
+        if not hasattr(parser, "token"):
+            print "You need to provide a token for this"
+            sys.exit(-1)
+        print "Attempting to remove subscription " + values
+        _socket = socket.socket()
+# why the fuck we need to use double (( wtf ))
+        _socket.connect((DispatcherHost, DispatcherPort))
+        _socket.send("unsubscribe " + values + " " + parser.token + "\n")
+# no ReadLine? Poor python
+        print _socket.recv(256)
+        _socket.close()
+        sys.exit(0)
+
+
+
+#set up some default vars
+
+DispatcherPort=29438
+
+# read config - this proves how crappy python is, we don't need to do it now, why should we,
+# but in python there is almost no other way... so we do it now to save typing of code
+# even if it reads the file no matter if it really need to use it or not which eats resources
+# we don't need to use
+
+with open ("/data/project/dispatcher/hostname", "r") as myfile:
+    DispatcherHost=myfile.read().replace('\n', '')
+
+parser = argparse.ArgumentParser(description='Command line interface for dispatcher daemon. Dispatcher is an utility that let you subscribe to RC feed in order to get notified about changes to selected pages. (In this moment only redis queues are supported)')
+parser.add_argument('--token', dest='token', help='Secret token that needs to be provided in order to modify existing subscription')
+parser.add_argument('--unsubscribe', dest='subscription', help='Remove a subscription with a given name.', action=unSubscribe)
+parser.add_argument('--subscribe', dest='subscription', help='Create a subscription with a given name. This name must be system unique', action=Subscribe)
+
+args = parser.parse_args()
+
+print "You need to provide some arguments, see --help"
