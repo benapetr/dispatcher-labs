@@ -117,11 +117,18 @@ namespace dispatcherd
 					{
 						Core.DebugLog("Loading " + feed.InnerText);
 						Subscription x = new Subscription(feed.InnerText);
-						x.token = feed.Attributes["token"].Value;
+						foreach (XmlAttribute x2 in feed.Attributes)
+						{
+							if (x2.Name == "token")
+							{
+								x.token = x2.Value;
+							}
+						}
 						if (feed.ChildNodes != null)
 						{
 							foreach (XmlNode item in feed.ChildNodes)
 							{
+								Core.DebugLog("Loading item " + item.InnerText);
 								FeedItem fx = new FeedItem();
 								fx.wiki = item.InnerText;
 								fx.PageName = item.Attributes["page"].Value;
