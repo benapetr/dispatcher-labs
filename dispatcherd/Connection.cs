@@ -169,12 +169,12 @@ namespace dispatcherd
 				case "insert":
 					if (!IsAuthenticated)
 					{
-						Send ("E020-Authentication was not completed");
+						Send ("E020: Authentication was not completed");
 						continue;
 					}
 					if (parameters.Count < 1)
 					{
-						Send ("E008-Missing parameter for insert");
+						Send ("E008: Missing parameter for insert");
 						continue;
 					}
 					List<FeedItem> InsertData;
@@ -183,24 +183,34 @@ namespace dispatcherd
 					{
 					case "xml":
 						InsertData = Subscription.String2List(temp1);
+						if (InsertData == null)
+						{
+							Send("E060: Invalid xml");
+							continue;
+						}
 						Send(feed2.Insert(InsertData).ToString());
 						continue;
 					case "json":
 						InsertData = Subscription.JSON2List(temp1);
+						if (InsertData == null)
+						{
+							Send("E062: Invalid JSON");
+							continue;
+						}
 						Send(feed2.Insert(InsertData).ToString());
 						continue;
 					}
-					Send("E010-Unknown format of data");
+					Send("E010: Unknown format of data");
 					continue;
 				case "remove":
 					if (!IsAuthenticated)
 					{
-						Send ("E020-Authentication was not completed");
+						Send ("E020: Authentication was not completed");
 						continue;
 					}
 					if (parameters.Count < 1)
 					{
-						Send ("E008-Missing parameter for delete");
+						Send ("E008: Missing parameter for delete");
 						continue;
 					}
 					List<FeedItem> RemoveData;
@@ -209,10 +219,20 @@ namespace dispatcherd
 					{
 					case "xml":
 						RemoveData = Subscription.String2List(temp2);
+						if (RemoveData == null)
+						{
+							Send("E060: Invalid xml");
+							continue;
+						}
 						Send(feed2.Delete(RemoveData).ToString());
 						continue;
 					case "json":
 						RemoveData = Subscription.JSON2List(temp2);
+						if (RemoveData == null)
+						{
+							Send("E062: Invalid json");
+							continue;
+						}
 						Send(feed2.Delete(RemoveData).ToString());
 						continue;
 					}
