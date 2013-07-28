@@ -109,10 +109,13 @@ namespace dispatcherd
 			{
 				DB.Clear();
 				file.Load(Configuration.DB);
+				Core.DebugLog("Loaded db");
 				if (file.ChildNodes.Count > 0)
 				{
-					foreach (XmlNode feed in file.ChildNodes)
+					Core.DebugLog("Loading child nodes");
+					foreach (XmlNode feed in file.ChildNodes[0])
 					{
+						Core.DebugLog("Loading " + feed.InnerText);
 						Subscription x = new Subscription(feed.InnerText);
 						x.token = feed.Attributes["token"].Value;
 						if (feed.ChildNodes != null)
