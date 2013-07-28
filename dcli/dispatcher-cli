@@ -25,7 +25,7 @@ parser.add_argument('--subscribe', dest='subscription', help='Create a subscript
 
 args = parser.parse_args()
 
-if args.subscription is str:
+if type(args.subscription) is str:
         print "Attempting to create new subscription " + args.subscription
         _socket = socket.socket()
 # why the fuck we need to use double (( wtf ))
@@ -36,8 +36,8 @@ if args.subscription is str:
         _socket.close()
         sys.exit(0);
 
-if args.un_subscription is str:
-        if not args.token is str:
+if type(args.un_subscription) is str:
+        if not type(args.token) is str:
             print "You need to provide a token for this"
             sys.exit(-1)
         print "Attempting to remove subscription " + args.un_subscription
