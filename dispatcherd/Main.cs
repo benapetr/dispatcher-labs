@@ -124,9 +124,9 @@ namespace dispatcherd
 								x.token = x2.Value;
 							}
 						}
-						if (feed.ChildNodes != null)
+						if (feed.ChildNodes != null && feed.ChildNodes.Count > 0)
 						{
-							foreach (XmlNode item in feed.ChildNodes)
+							foreach (XmlNode item in feed.ChildNodes[0])
 							{
 								Core.DebugLog("Loading item " + item.InnerText);
 								FeedItem fx = new FeedItem();
