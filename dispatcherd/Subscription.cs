@@ -17,6 +17,9 @@ using System.Threading;
 
 namespace dispatcherd
 {
+	/// <summary>
+	/// This is a definition in subscription, each definition can match some pattern
+	/// </summary>
 	public class FeedItem
 	{
 		public string wiki = null;
@@ -26,11 +29,18 @@ namespace dispatcherd
 		public string Username = "";
 		public bool UsernameIsRegex = false;
 	}
-
+	
 	public class Subscription
 	{
+		/// <summary>
+		/// Name
+		/// </summary>
 		public string Name = null;
+		/// <summary>
+		/// Token
+		/// </summary>
 		public string token = null;
+		public Format format = Format.Pipe;
 		public List<FeedItem> Items = new List<FeedItem>();
 
 		public void GenerateToken()
@@ -190,6 +200,13 @@ namespace dispatcherd
 				Core.DebugLog(fail.ToString());
 			}
 			return null;
+		}
+
+		public enum Format
+		{
+			Pipe,
+			XML,
+			JSON
 		}
 	}
 }

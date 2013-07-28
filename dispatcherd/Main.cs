@@ -157,6 +157,8 @@ namespace dispatcherd
 				Load();
 				Log ("Initializing terminal");
 				Terminal.Init();
+				DebugLog("Loading writer");
+				Writer.Init();
 				Log("Redis");
 				redis = new Redis("tools-redis");
 				Log("Connecting to feed");
