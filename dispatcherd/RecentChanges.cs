@@ -44,7 +44,7 @@ namespace dispatcherd
 				string[] db = File.ReadAllLines ("sites");
 				foreach (string line in db)
 				{
-					string[] parts = line.Split(' ');
+					string[] parts = line.Split('|');
 					Wiki wiki = new Wiki();
 					wiki.Channel = parts[0];
 					wiki.Url = parts[1];
