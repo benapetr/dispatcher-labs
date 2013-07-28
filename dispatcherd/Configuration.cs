@@ -7,6 +7,7 @@ namespace dispatcherd
 		public class Network
 		{
 			public static int Port = 29438;
+			public static bool TrafficDump = false;
 		}
 
 		public class System

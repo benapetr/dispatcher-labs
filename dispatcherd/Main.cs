@@ -19,6 +19,8 @@ namespace dispatcherd
 {
 	class Core
 	{
+		public static Redis redis;
+		public static object SaveLock = new object();
 		public static bool IsRunning
 		{
 			get
@@ -27,6 +29,7 @@ namespace dispatcherd
 			}
 		}
 		private static bool Running = true;
+		public static Dictionary<string, Wiki> WD = new Dictionary<string, Wiki>();
 		public static Dictionary<string, Subscription> DB = new Dictionary<string, Subscription>();
 
 		public static void DebugLog(string text, int Verbosity = 1)
@@ -39,6 +42,8 @@ namespace dispatcherd
 
 		public static void Save()
 		{
+			lock (SaveLock)
+			{
 			Core.DebugLog("Storing db");
 			XmlDocument file = new XmlDocument();
 			XmlNode n = file.CreateElement("data");
@@ -88,6 +93,7 @@ namespace dispatcherd
 			if (File.Exists(Configuration.DB + "~"))
 			{
 				File.Delete(Configuration.DB + "~");
+			}
 			}
 		}
 
@@ -141,7 +147,14 @@ namespace dispatcherd
 				Load();
 				Log ("Initializing terminal");
 				Terminal.Init();
+				Log("Redis");
+				redis = new Redis("tools-redis");
 				Log("Connecting to feed");
+				RecentChanges.Init();
+				while (IsRunning)
+				{
+					Thread.Sleep(100);
+				}
 			}
 		}
 	}

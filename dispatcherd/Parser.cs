@@ -37,6 +37,9 @@ namespace dispatcherd
 					case "--help":
 						Help();
 						return false;
+					case "--trafficdump":
+						Configuration.Network.TrafficDump = true;
+						break;
 					}
 					continue;
 				}

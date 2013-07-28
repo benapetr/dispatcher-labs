@@ -33,6 +33,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="RedisSharp">
+      <HintPath>RedisSharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Main.cs" />
@@ -44,6 +47,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="Connection.cs" />
     <Compile Include="Subscription.cs" />
+    <Compile Include="RecentChanges.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
