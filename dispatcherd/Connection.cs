@@ -8,6 +8,7 @@
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the       
 //  GNU General Public License for more details.
 
+using System.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -178,11 +179,16 @@ namespace dispatcherd
 						continue;
 					}
 					List<FeedItem> InsertData;
-					string temp1 = line.Substring ("insert".Length + parameters[0].Length + 2);
+					StringBuilder sb = new StringBuilder("");
 					switch (parameters[0])
 					{
 					case "xml":
-						InsertData = Subscription.String2List(temp1);
+						while (!line.Contains("</items>"))
+						{
+							line = streamReader.ReadLine();
+							sb.Append(line + "\n");
+						}
+						InsertData = Subscription.String2List(sb.ToString());
 						if (InsertData == null)
 						{
 							Send("E060: Invalid xml");
@@ -191,7 +197,7 @@ namespace dispatcherd
 						Send(feed2.Insert(InsertData).ToString());
 						continue;
 					case "json":
-						InsertData = Subscription.JSON2List(temp1);
+						InsertData = Subscription.JSON2List(sb.ToString());
 						if (InsertData == null)
 						{
 							Send("E062: Invalid JSON");
@@ -214,11 +220,15 @@ namespace dispatcherd
 						continue;
 					}
 					List<FeedItem> RemoveData;
-					string temp2 = line.Substring ("remove".Length + parameters[0].Length + 2);
+					StringBuilder sb02 = new StringBuilder("");
 					switch (parameters[0])
 					{
 					case "xml":
-						RemoveData = Subscription.String2List(temp2);
+						while (!line.Contains ("</items>"))
+						{
+							sb02.Append(line + "\n");
+						}
+						RemoveData = Subscription.String2List(sb02.ToString());
 						if (RemoveData == null)
 						{
 							Send("E060: Invalid xml");
@@ -227,7 +237,7 @@ namespace dispatcherd
 						Send(feed2.Delete(RemoveData).ToString());
 						continue;
 					case "json":
-						RemoveData = Subscription.JSON2List(temp2);
+						RemoveData = Subscription.JSON2List(sb02.ToString());
 						if (RemoveData == null)
 						{
 							Send("E062: Invalid json");

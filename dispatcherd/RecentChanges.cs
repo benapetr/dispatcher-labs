@@ -49,6 +49,10 @@ namespace dispatcherd
 					wiki.Channel = parts[0];
 					wiki.Url = parts[1];
 					wiki.Name = parts[2];
+					if (Core.WD.ContainsKey (parts[2]))
+					{
+						throw new Exception("There is already: " + parts[2]);
+					}
 					Core.WD.Add(parts[2], wiki);
 				}
 			}
