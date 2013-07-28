@@ -6,37 +6,6 @@ import argparse
 import sys
 import socket
 
-# we define a new class for every function of parser... poor python
-
-class Subscribe(argparse.Action):
-    def __call__ (self, parser, namespace, values, option_string=None):
-        print "Attempting to create new subscription " + values
-        _socket = socket.socket()
-# why the fuck we need to use double (( wtf ))
-        _socket.connect((DispatcherHost, DispatcherPort))
-        _socket.send("subscribe " + values + "\n")
-# no ReadLine? Poor python
-        print _socket.recv(256);
-        _socket.close()
-        sys.exit(0)
-
-class unSubscribe(argparse.Action):
-    def __call__ (self, parser, namespace, values, option_string=None):
-        if not hasattr(parser, "token"):
-            print "You need to provide a token for this"
-            sys.exit(-1)
-        print "Attempting to remove subscription " + values
-        _socket = socket.socket()
-# why the fuck we need to use double (( wtf ))
-        _socket.connect((DispatcherHost, DispatcherPort))
-        _socket.send("unsubscribe " + values + " " + parser.token + "\n")
-# no ReadLine? Poor python
-        print _socket.recv(256)
-        _socket.close()
-        sys.exit(0)
-
-
-
 #set up some default vars
 
 DispatcherPort=29438
@@ -51,9 +20,35 @@ with open ("/data/project/dispatcher/hostname", "r") as myfile:
 
 parser = argparse.ArgumentParser(description='Command line interface for dispatcher daemon. Dispatcher is an utility that let you subscribe to RC feed in order to get notified about changes to selected pages. (In this moment only redis queues are supported)')
 parser.add_argument('--token', dest='token', help='Secret token that needs to be provided in order to modify existing subscription')
-parser.add_argument('--unsubscribe', dest='subscription', help='Remove a subscription with a given name.', action=unSubscribe)
-parser.add_argument('--subscribe', dest='subscription', help='Create a subscription with a given name. This name must be system unique', action=Subscribe)
+parser.add_argument('--unsubscribe', dest='un_subscription', help='Remove a subscription with a given name.')
+parser.add_argument('--subscribe', dest='subscription', help='Create a subscription with a given name. This name must be system unique')
 
 args = parser.parse_args()
+
+if hasattr(args, "subscription"):
+        print "Attempting to create new subscription " + args.subscription
+        _socket = socket.socket()
+# why the fuck we need to use double (( wtf ))
+        _socket.connect((DispatcherHost, DispatcherPort))
+        _socket.send("subscribe " + args.subscription + "\n")
+# no ReadLine? Poor python
+        print _socket.recv(256);
+        _socket.close()
+        sys.exit(0);
+
+if hasattr(args, "un_subscription"):
+        if not hasattr(args, "token"):
+            print "You need to provide a token for this"
+            sys.exit(-1)
+        print "Attempting to remove subscription " + args.un_subscription
+        _socket = socket.socket()
+# why the fuck we need to use double (( wtf ))
+        _socket.connect((DispatcherHost, DispatcherPort))
+        _socket.send("unsubscribe " + args.un_subscription + " " + args.token + "\n")
+# no ReadLine? Poor python
+        print _socket.recv(256)
+        _socket.close()
+        sys.exit(0)
+
 
 print "You need to provide some arguments, see --help"
