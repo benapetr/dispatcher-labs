@@ -111,6 +111,57 @@ namespace dispatcherd
 			Name = name;
 		}
 
+		public FeedItem RetrieveItem(FeedItem item)
+		{
+			lock (Items)
+			{
+				foreach(FeedItem xx in Items)
+				{
+					if (xx.IsRegex == item.IsRegex && xx.wiki == item.wiki &&
+					    xx.PageName == item.PageName && xx.Username == item.Username)
+					{
+						return xx;
+					}
+				}
+			}
+			return null;
+		}
+
+		public int Insert(List<FeedItem> list)
+		{
+			int result = 0;
+			lock (Items)
+			{
+				foreach (FeedItem xx in list)
+				{
+					if (RetrieveItem(xx) == null)
+					{
+						result++;
+						Items.Add(xx);
+					}
+				}
+			}
+			return result;
+		}
+
+		public int Delete(List<FeedItem> list)
+		{
+			int result = 0;
+			lock(Items)
+			{
+				foreach (FeedItem xx in list)
+				{
+					FeedItem original = RetrieveItem(xx);
+					if (original != null)
+					{
+						result++;
+						Items.Remove(original);
+					}
+				}
+			}
+			return result;
+		}
+
 		public static Feed login(string name, string token)
 		{
 			lock (Core.DB)

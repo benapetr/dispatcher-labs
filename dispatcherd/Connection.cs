@@ -166,6 +166,34 @@ namespace dispatcherd
 					}
 					Send ("E005: Invalid token or name");
 					continue;
+				case "insert":
+					if (!IsAuthenticated)
+					{
+						Send ("E020-Authentication was not completed");
+						continue;
+					}
+					if (parameters.Count < 1)
+					{
+						Send ("E008-Missing parameter for insert");
+						continue;
+					}
+					List<FeedItem> InsertData = Feed.String2List(line.Substring("insert ".Length));
+					Send(feed2.Insert(InsertData).ToString());
+					continue;
+				case "remove":
+					if (!IsAuthenticated)
+					{
+						Send ("E020-Authentication was not completed");
+						continue;
+					}
+					if (parameters.Count < 1)
+					{
+						Send ("E008-Missing parameter for delete");
+						continue;
+					}
+					List<FeedItem> RemoveData = Feed.String2List(line.Substring("insert ".Length));
+					Send(feed2.Delete(RemoveData).ToString());
+					continue;
 				default:
 					Send("E006: Command not understood");
 					continue;
