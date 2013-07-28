@@ -37,7 +37,7 @@ if args.subscription is str:
         sys.exit(0);
 
 if args.un_subscription is str:
-        if not args.token is str):
+        if not args.token is str:
             print "You need to provide a token for this"
             sys.exit(-1)
         print "Attempting to remove subscription " + args.un_subscription
