@@ -79,6 +79,7 @@ namespace dispatcherd
 					}
 					n.AppendChild(feed);
 				}
+			file.AppendChild(n);
 			if (File.Exists(Configuration.DB))
 			{
 				File.Copy(Configuration.DB, Configuration.DB + "~", true);
