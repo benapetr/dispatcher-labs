@@ -23,7 +23,7 @@ namespace dispatcherd
 		private StreamWriter streamWriter;
 		public bool IsConnected = true;
 		public bool IsAuthenticated = false;
-		public Feed feed2 = null;
+		public Subscription feed2 = null;
 
 		public Connection (TcpClient client)
 		{
@@ -64,13 +64,13 @@ namespace dispatcherd
 							Send("E001: Invalid name");
 							continue;
 						}
-						Feed feed;
+						Subscription feed;
 						if (Core.DB.ContainsKey(parameters[0]))
 						{
 							Send ("E002: This subscription exist");
 							continue;
 						}
-						if (line.Length > command.Length + parameters[0].Length + 2)
+						/*if (line.Length > command.Length + parameters[0].Length + 2)
 						{
 							string xml = line.Substring(command.Length + parameters[0].Length + 2);
 							List<FeedItem> items = Feed.String2List(xml);
@@ -93,8 +93,8 @@ namespace dispatcherd
 								Core.Save();
 								continue;
 							}
-						}
-						feed = new Feed(parameters[0]);
+						}*/
+						feed = new Subscription(parameters[0]);
 						feed.GenerateToken();
 						lock (Core.DB)
 						{
@@ -129,7 +129,7 @@ namespace dispatcherd
 						}
 					}else
 					{
-						Feed f2 = Feed.login(parameters[0], parameters[1]);
+						Subscription f2 = Subscription.login(parameters[0], parameters[1]);
 						if (f2 != null)
 						{
 							lock (Core.DB)
@@ -155,7 +155,7 @@ namespace dispatcherd
 				case "auth":
 					if (parameters.Count == 2)
 					{
-						Feed f1 = Feed.login(parameters[0], parameters[1]);
+						Subscription f1 = Subscription.login(parameters[0], parameters[1]);
 						if (f1 != null)
 						{
 							IsAuthenticated = true;
@@ -177,8 +177,20 @@ namespace dispatcherd
 						Send ("E008-Missing parameter for insert");
 						continue;
 					}
-					List<FeedItem> InsertData = Feed.String2List(line.Substring("insert ".Length));
-					Send(feed2.Insert(InsertData).ToString());
+					List<FeedItem> InsertData;
+					string temp1 = line.Substring ("insert".Length + parameters[0].Length + 2);
+					switch (parameters[0])
+					{
+					case "xml":
+						InsertData = Subscription.String2List(temp1);
+						Send(feed2.Insert(InsertData).ToString());
+						continue;
+					case "json":
+						InsertData = Subscription.JSON2List(temp1);
+						Send(feed2.Insert(InsertData).ToString());
+						continue;
+					}
+					Send("E010-Unknown format of data");
 					continue;
 				case "remove":
 					if (!IsAuthenticated)
@@ -191,8 +203,20 @@ namespace dispatcherd
 						Send ("E008-Missing parameter for delete");
 						continue;
 					}
-					List<FeedItem> RemoveData = Feed.String2List(line.Substring("insert ".Length));
-					Send(feed2.Delete(RemoveData).ToString());
+					List<FeedItem> RemoveData;
+					string temp2 = line.Substring ("remove".Length + parameters[0].Length + 2);
+					switch (parameters[0])
+					{
+					case "xml":
+						RemoveData = Subscription.String2List(temp2);
+						Send(feed2.Delete(RemoveData).ToString());
+						continue;
+					case "json":
+						RemoveData = Subscription.JSON2List(temp2);
+						Send(feed2.Delete(RemoveData).ToString());
+						continue;
+					}
+					Send("E010-Unknown format of data");
 					continue;
 				default:
 					Send("E006: Command not understood");

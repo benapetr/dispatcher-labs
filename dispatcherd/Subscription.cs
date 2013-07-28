@@ -27,7 +27,7 @@ namespace dispatcherd
 		public bool UsernameIsRegex = false;
 	}
 
-	public class Feed
+	public class Subscription
 	{
 		public string Name = null;
 		public string token = null;
@@ -100,12 +100,12 @@ namespace dispatcherd
 			return null;
 		}
 
-		public Feed (string name)
+		public Subscription (string name)
 		{
 			Name = name;
 		}
 
-		public Feed(string name, List<FeedItem> items)
+		public Subscription(string name, List<FeedItem> items)
 		{
 			Items.AddRange(items);
 			Name = name;
@@ -162,7 +162,7 @@ namespace dispatcherd
 			return result;
 		}
 
-		public static Feed login(string name, string token)
+		public static Subscription login(string name, string token)
 		{
 			lock (Core.DB)
 			{
@@ -173,6 +173,21 @@ namespace dispatcherd
 						return Core.DB[name];
 					}
 				}
+			}
+			return null;
+		}
+
+		public static List<FeedItem> JSON2List(string list)
+		{
+			try
+			{
+				List<FeedItem> result = new List<FeedItem>();
+				return result;
+			}
+			catch(Exception fail)
+			{
+				Core.DebugLog("JSON exception while parsing " + list);
+				Core.DebugLog(fail.ToString());
 			}
 			return null;
 		}

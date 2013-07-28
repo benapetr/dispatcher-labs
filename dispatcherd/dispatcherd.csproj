@@ -38,12 +38,12 @@
     <Compile Include="Main.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Class.cs" />
-    <Compile Include="Feed.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="IRC.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Subscription.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

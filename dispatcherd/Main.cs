@@ -27,7 +27,7 @@ namespace dispatcherd
 			}
 		}
 		private static bool Running = true;
-		public static Dictionary<string, Feed> DB = new Dictionary<string, Feed>();
+		public static Dictionary<string, Subscription> DB = new Dictionary<string, Subscription>();
 
 		public static void DebugLog(string text, int Verbosity = 1)
 		{
@@ -43,13 +43,13 @@ namespace dispatcherd
 			XmlDocument file = new XmlDocument();
 			XmlNode n = file.CreateElement("data");
 
-			List<Feed> f = new List<Feed>();
+			List<Subscription> f = new List<Subscription>();
 
 			lock (DB)
 			{
 				f.AddRange(DB.Values);
 			}
-				foreach (Feed x in f)
+				foreach (Subscription x in f)
 				{
 					XmlNode feed = file.CreateElement("feed");
 					feed.InnerText = x.Name;
@@ -106,7 +106,7 @@ namespace dispatcherd
 				{
 					foreach (XmlNode feed in file.ChildNodes)
 					{
-						Feed x = new Feed(feed.InnerText);
+						Subscription x = new Subscription(feed.InnerText);
 						x.token = feed.Attributes["token"].Value;
 						if (feed.ChildNodes != null)
 						{
