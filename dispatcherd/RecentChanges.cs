@@ -268,11 +268,11 @@ namespace dispatcherd
 				{
 					return Cache[channel];
 				}
-				foreach(Wiki wiki in Core.WD)
+				foreach(Wiki wiki in Core.WD.Values)
 				{
 					if (wiki.Channel == channel)
 					{
-						Cache.Add(wiki);
+						Cache.Add(channel, wiki);
 						return wiki;
 					}
 				}
