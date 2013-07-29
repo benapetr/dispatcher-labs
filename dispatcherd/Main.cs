@@ -19,8 +19,17 @@ namespace dispatcherd
 {
     class Core
     {
+        /// <summary>
+        /// Redis server
+        /// </summary>
         public static Redis redis;
+        /// <summary>
+        /// This is a lock used for Save()
+        /// </summary>
         public static object SaveLock = new object();
+        /// <summary>
+        /// If server is running, in case this is false all threads should be turned off ASAP
+        /// </summary>
         public static bool IsRunning
         {
             get
@@ -28,8 +37,17 @@ namespace dispatcherd
                 return Running;
             }
         }
+        /// <summary>
+        /// Change this to false to tell all threads to exit
+        /// </summary>
         private static bool Running = true;
+        /// <summary>
+        /// Wiki data
+        /// </summary>
         public static Dictionary<string, Wiki> WD = new Dictionary<string, Wiki>();
+        /// <summary>
+        /// Database of subscriptions
+        /// </summary>
         public static Dictionary<string, Subscription> DB = new Dictionary<string, Subscription>();
 
         public static void DebugLog(string text, int Verbosity = 1)
@@ -40,6 +58,10 @@ namespace dispatcherd
             }
         }
 
+        /// <summary>
+        /// Store all subscription data to disk, try to avoid calling this function too often, because it writes data to disk
+        /// and eventually need to lock some resources
+        /// </summary>
         public static void Save()
         {
             lock (SaveLock)
@@ -97,6 +119,9 @@ namespace dispatcherd
             }
         }
 
+        /// <summary>
+        /// Load all data from disk
+        /// </summary>
         public static void Load()
         {
             Core.DebugLog("Loading db");
@@ -149,6 +174,10 @@ namespace dispatcherd
             Console.WriteLine(DateTime.Now.ToString() + ": " + text);
         }
 
+        /// <summary>
+        /// Entry point
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             if (Parser.Parse(args))

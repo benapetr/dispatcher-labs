@@ -36,33 +36,104 @@ namespace dispatcherd
 
     public class ChangeItem
     {
-        public string Page = null;
+        /// <summary>
+        /// Name of page
+        /// </summary>
+        public string Title = null;
+        /// <summary>
+        /// User who edited the page
+        /// </summary>
         public string User = null;
+        /// <summary>
+        /// ID of change
+        /// </summary>
         public string ChangeID = null;
+        /// <summary>
+        /// Action that was done
+        /// </summary>
         public action Action = action.Unknown;
+        /// <summary>
+        /// ID of diff
+        /// </summary>
         public string DiffID = null;
+        /// <summary>
+        /// Size of change
+        /// </summary>
         public string ChangeSize = null;
-        public string Summary;
+        /// <summary>
+        /// Summary of edit
+        /// </summary>
+        public string Summary = null;
+        /// <summary>
+        /// Whether it was a minor edit
+        /// </summary>
         public bool Minor = false;
+        /// <summary>
+        /// Old ID ?? wtf comment me ??
+        /// </summary>
         public string oldid = null;
+        /// <summary>
+        /// Namespace
+        /// </summary>
+        public string Namespace = null;
+        /// <summary>
+        /// If this is a new page
+        /// </summary>
         public bool New = false;
+        /// <summary>
+        /// Bot
+        /// </summary>
         public bool Bot = false;
+        /// <summary>
+        /// Timestamp
+        /// </summary>
+        public DateTime Time;
 
+        /// <summary>
+        /// Action
+        /// </summary>
         public enum action
         {
+            /// <summary>
+            /// New page
+            /// </summary>
             New,
+            /// <summary>
+            /// Change of existing
+            /// </summary>
             Change,
+            /// <summary>
+            /// Deletion of a page
+            /// </summary>
             Delete,
+            /// <summary>
+            /// Protection of a page
+            /// </summary>
             Protect,
+            /// <summary>
+            /// Unknown
+            /// </summary>
             Unknown
         }
     }
 
+    /// <summary>
+    /// Help for IRC feed
+    /// </summary>
     public class RecentChanges
     {
+        /// <summary>
+        /// If we are connected to irc feed
+        /// </summary>
         public static bool Connected = true;
+        /// <summary>
+        /// Thread in which this thing run
+        /// </summary>
         private static Thread thread;
 
+        /// <summary>
+        /// This will start this subsystem in own thread
+        /// </summary>
         public static void Init()
         {
             Load();
@@ -71,6 +142,11 @@ namespace dispatcherd
             Core.DebugLog("Initialized RC");
         }
 
+        /// <summary>
+        /// Convert IRC line to diff
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public static ChangeItem String2Change(string text)
         {
             // get a page
@@ -96,15 +172,15 @@ namespace dispatcherd
                 change.New = true;
             }
 
-            change.Page = text.Substring(text.IndexOf(variables.color + "14[[") + 5);
-            change.Page = change.Page.Substring(3);
-            if (!change.Page.Contains(variables.color + "14]]"))
+            change.Title = text.Substring(text.IndexOf(variables.color + "14[[") + 5);
+            change.Title = change.Title.Substring(3);
+            if (!change.Title.Contains(variables.color + "14]]"))
             {
                 Core.DebugLog("Parser error #2", 6);
                 return null;
             }
 
-            change.Page = change.Page.Substring(0, change.Page.IndexOf(variables.color + "14"));
+            change.Title = change.Title.Substring(0, change.Title.IndexOf(variables.color + "14"));
 
             text = text.Substring(text.IndexOf(variables.color + "14]]") + 5);
 
@@ -187,6 +263,9 @@ namespace dispatcherd
             return change;
         }
 
+        /// <summary>
+        /// Load all definitions of wiki's
+        /// </summary>
         private static void Load()
         {
             lock (Core.WD)
@@ -226,45 +305,27 @@ namespace dispatcherd
             }
         }
 
-        private static bool Matches(FeedItem item, ChangeItem diff)
+        /// <summary>
+        /// Check if a definition matches the diff
+        /// </summary>
+        /// <param name="definition"></param>
+        /// <param name="diff"></param>
+        /// <returns></returns>
+        private static bool Matches(FeedItem definition, ChangeItem diff)
         {
-            if (!item.IsRegex && item.PageName != "" && item.PageName != diff.Page)
+            if (!definition.IsRegex && definition.PageName != "" && definition.PageName != diff.Title)
             {
                 return false;
             }
-            if (item.IsRegex)
+            if (definition.IsRegex)
             {
                 return false;
             }
-            if (!item.UsernameIsRegex && item.Username != "" && item.Username != diff.User)
+            if (!definition.UsernameIsRegex && definition.Username != "" && definition.Username != diff.User)
             {
                 return false;
             }
             return true;
-        }
-
-        public static string Format2Redis(ChangeItem diff, Subscription.Format format, Wiki wiki)
-        {
-            if (format == Subscription.Format.XML)
-            {
-                XmlDocument d = new XmlDocument();
-                XmlNode node = d.CreateElement("rc");
-                XmlAttribute name = d.CreateAttribute("wiki");
-                name.Value = wiki.Name;
-                XmlAttribute pagename = d.CreateAttribute("pagename");
-                pagename.Value = diff.Page;
-                node.Attributes.Append(name);
-                node.Attributes.Append(pagename);
-                return node.InnerXml;
-            }
-            return wiki.Name + "|" + diff.Page + "|" + diff.User + "|" + diff.Action.ToString()
-            + "|" + diff.DiffID + "|" + diff.ChangeID + "|" + diff.ChangeSize + "|"
-                    + diff.Summary;
-        }
-
-        public static void RedisSend(ChangeItem diff, Subscription subscription, Wiki wiki)
-        {
-            Core.redis.RightPush(subscription.Name, Format2Redis(diff, subscription.format, wiki));
         }
 
         public static Dictionary<string, Wiki> Cache = new Dictionary<string, Wiki>();
@@ -346,7 +407,7 @@ namespace dispatcherd
                                 {
                                     if (Matches(item, c))
                                     {
-                                        RedisSend(c, subscription, wiki);
+                                        RedisIO.RedisSend(c, subscription, wiki);
                                     }
                                 }
                             }

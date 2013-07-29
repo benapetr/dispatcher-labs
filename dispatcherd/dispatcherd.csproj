@@ -42,6 +42,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="IRC.cs" />
+    <Compile Include="RedisIO.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Connection.cs" />

@@ -14,6 +14,9 @@ namespace dispatcherd
 {
     public class Parser
     {
+        /// <summary>
+        /// Display a help
+        /// </summary>
         private static void Help()
         {
             Console.WriteLine("Bot dispatcher daemon\n\n" +
@@ -23,6 +26,11 @@ namespace dispatcherd
                               "This project is open source licensed under GNU GPLv3");
         }
 
+        /// <summary>
+        /// Parse all args
+        /// </summary>
+        /// <param name="d"></param>
+        /// <returns>Return true if we can continue or false if not</returns>
         public static bool Parse(string[] d)
         {
             foreach (string parameter in d)
