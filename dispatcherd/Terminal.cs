@@ -15,45 +15,45 @@ using System.Threading;
 
 namespace dispatcherd
 {
-	public class Terminal
-	{
-		public static uint Connections = 0;
-		private static Thread thread = null;
+    public class Terminal
+    {
+        public static uint Connections = 0;
+        private static Thread thread = null;
 
-		public static void Init()
-		{
-			thread = new Thread(exec);
-			thread.Name = "terminal";
-			thread.Start();
-			Core.DebugLog("Started tr");
-		}
+        public static void Init()
+        {
+            thread = new Thread(exec);
+            thread.Name = "terminal";
+            thread.Start();
+            Core.DebugLog("Started tr");
+        }
 
-		private static void Client(object data)
-		{
-			Connections++;
-			try
-			{
-				Connection connection = new Connection((System.Net.Sockets.TcpClient)data);
-				connection.Exec();
-			}
-			catch (Exception fail)
-			{
-				Console.WriteLine(fail.ToString ());
-			}
-			Connections--;
-		}
+        private static void Client(object data)
+        {
+            Connections++;
+            try
+            {
+                Connection connection = new Connection((System.Net.Sockets.TcpClient)data);
+                connection.Exec();
+            }
+            catch (Exception fail)
+            {
+                Console.WriteLine(fail.ToString());
+            }
+            Connections--;
+        }
 
-		public static void exec()
-		{
-			System.Net.Sockets.TcpListener server = new System.Net.Sockets.TcpListener(IPAddress.Any, Configuration.Network.Port);
-			server.Start();
-			while (Core.IsRunning)
-			{
-				System.Net.Sockets.TcpClient connection = server.AcceptTcpClient();
-				Thread _client = new Thread(Client);
-				_client.Start(connection);
-			}
-		}
-	}
+        public static void exec()
+        {
+            System.Net.Sockets.TcpListener server = new System.Net.Sockets.TcpListener(IPAddress.Any, Configuration.Network.Port);
+            server.Start();
+            while (Core.IsRunning)
+            {
+                System.Net.Sockets.TcpClient connection = server.AcceptTcpClient();
+                Thread _client = new Thread(Client);
+                _client.Start(connection);
+            }
+        }
+    }
 }
 
