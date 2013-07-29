@@ -6,6 +6,41 @@ import argparse
 import sys
 import socket
 
+def Login(socket, s, v):
+    socket.send("auth " + s + " " + v.token + "\n");
+    result = socket.recv(256);
+    if (not "OK" in result):
+        print "Authentication failed: " + result
+        sys.exit(0)
+
+def CreateXml(vars):
+    result = "<items>\n<item" 
+    if type(vars.page) is str:
+        result = result + ' page="' + vars.page + '"'
+    if type(vars.px) is str:
+        result = result + ' page_rx="' + vars.px + '"'
+    if type(vars.ux) is str:
+        result = result + ' user_rx="' + vars.ux + '"'
+    if type(vars.user) is str:
+        result = result + ' user="' + vars.page + '"'
+    result = result + '>' + vars.wiki + '</item>' + " \n</items>"
+    return result 
+
+def ParameterCheck(vars):
+    ok=False
+    if type(vars.page) is str or type(vars.px) is str or  type(vars.ux) is str or type (vars.user) is str:
+        ok = True
+    if not ok:
+        print "You need to provide --pagerx or --page and --user";
+        return False
+    if not type(vars.wiki) is str:
+        print "You need to provide --wiki";
+        return False
+    if not type(vars.token) is str:
+        print "You need to provide --token";
+        return False
+    return True
+
 #set up some default vars
 
 DispatcherPort=29438
@@ -22,8 +57,38 @@ parser = argparse.ArgumentParser(description='Command line interface for dispatc
 parser.add_argument('--token', dest='token', help='Secret token that needs to be provided in order to modify existing subscription')
 parser.add_argument('--unsubscribe', dest='un_subscription', help='Remove a subscription with a given name.')
 parser.add_argument('--subscribe', dest='subscription', help='Create a subscription with a given name. This name must be system unique')
+parser.add_argument('--insert', dest='insert', help='Insert a data to subscription with a given name. You need to provide token, wiki and page or user (or both)')
+parser.add_argument('--remove', dest='remove', help='Remove a data from subscription with a given name. You need to provide token, wiki and page or user (or both)')
+parser.add_argument('--wiki', dest='wiki', help='Specify a name of wiki to watch, this argument is needed for insert and remove')
+parser.add_argument('--page', dest='page', help='Name of a page to watch (case sensitive)');
+parser.add_argument('--pagerx', dest='px', help='Regular expression the page name should match');
+parser.add_argument('--user', dest='user', help='Username to watch');
+parser.add_argument('--userrx', dest='ux', help='Regular expression that username should match');
 
 args = parser.parse_args()
+
+if type(args.remove) is str:
+    if ParameterCheck(args):
+        print "Logging to a subscription"
+        _socket = socket.socket();
+        _socket.connect((DispatcherHost, DispatcherPort))
+        Login(_socket, args.remove, args)
+        print "Attempting to remove data from subscription"
+        _socket.close()
+
+if type(args.insert) is str:
+    if ParameterCheck(args):
+        print "Logging to a subscription"
+        print CreateXml(args)
+        _socket = socket.socket();
+        _socket.connect((DispatcherHost, DispatcherPort))
+        Login(_socket, args.insert, args)
+        print "Attempting to insert data"
+        _socket.send("insert xml\n")
+        _socket.send(CreateXml(args) + "\n")
+        print "Inserted: " + _socket.recv(64)
+        _socket.close()
+        sys.exit(0)
 
 if type(args.subscription) is str:
         print "Attempting to create new subscription " + args.subscription

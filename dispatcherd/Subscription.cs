@@ -69,15 +69,19 @@ namespace dispatcherd
 				XmlDocument d = new XmlDocument();
 				d.LoadXml (list);
 
-				foreach (XmlNode node in d.ChildNodes)
+				foreach (XmlNode node in d.ChildNodes[0])
 				{
 					if (node.Name == "item")
 					{
 						FeedItem i = new FeedItem();
 						i.wiki = node.InnerText;
+						if (!Core.WD.ContainsKey(i.wiki))
+						{
+							continue;
+						}
 						foreach (XmlAttribute attribute in node.Attributes)
 						{
-							if (attribute.Name == "pageregex")
+							if (attribute.Name == "page_rx")
 							{
 								i.IsRegex = true;
 								i.PageName = attribute.Value;
@@ -87,12 +91,12 @@ namespace dispatcherd
 								i.IsRegex = false;
 								i.PageName = attribute.Value;
 							}
-							if (attribute.Name == "nickregex")
+							if (attribute.Name == "user_")
 							{
 								i.Username = attribute.Value;
 								i.UsernameIsRegex = true;
 							}
-							if (attribute.Name == "nick")
+							if (attribute.Name == "user")
 							{
 								i.Username = attribute.Value;
 							}
