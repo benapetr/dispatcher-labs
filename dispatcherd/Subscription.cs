@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Net;
+using Newtonsoft.Json;
 using System.Threading;
 
 namespace dispatcherd
@@ -243,7 +244,7 @@ namespace dispatcherd
         {
             try
             {
-                List<FeedItem> result = new List<FeedItem>();
+                List<FeedItem> result = JsonConvert.DeserializeObject<List<FeedItem>>(list);
                 return result;
             }
             catch (Exception fail)

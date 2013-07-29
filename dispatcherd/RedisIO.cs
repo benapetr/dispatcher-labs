@@ -11,8 +11,7 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using System.IO;
-using System.Net.Sockets;
+using Newtonsoft.Json;
 
 namespace dispatcherd
 {
@@ -61,6 +60,12 @@ namespace dispatcherd
 
                 return node.InnerXml;
             }
+
+            if (format == Subscription.Format.JSON)
+            {
+                return JsonConvert.SerializeObject(diff).Replace("\n", "");
+            }
+
             return wiki.Name + "|" + diff.Title + "|" + diff.User + "|" + diff.Action.ToString()
             + "|" + diff.DiffID + "|" + diff.ChangeID + "|" + diff.ChangeSize + "|"
                     + diff.Summary;
