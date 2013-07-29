@@ -15,11 +15,23 @@ using System.Threading;
 
 namespace dispatcherd
 {
+    /// <summary>
+    /// Listener for TCP
+    /// </summary>
     public class Terminal
     {
+        /// <summary>
+        /// Number of currently connected sessions
+        /// </summary>
         public static uint Connections = 0;
+        /// <summary>
+        /// Thread in which this thing run
+        /// </summary>
         private static Thread thread = null;
 
+        /// <summary>
+        /// Start it
+        /// </summary>
         public static void Init()
         {
             thread = new Thread(exec);
@@ -28,6 +40,10 @@ namespace dispatcherd
             Core.DebugLog("Started tr");
         }
 
+        /// <summary>
+        /// Handle a new connection
+        /// </summary>
+        /// <param name="data"></param>
         private static void Client(object data)
         {
             Connections++;
@@ -43,6 +59,9 @@ namespace dispatcherd
             Connections--;
         }
 
+        /// <summary>
+        /// Run a listener
+        /// </summary>
         public static void exec()
         {
             System.Net.Sockets.TcpListener server = new System.Net.Sockets.TcpListener(IPAddress.Any, Configuration.Network.Port);

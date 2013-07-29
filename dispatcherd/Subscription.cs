@@ -40,9 +40,18 @@ namespace dispatcherd
         /// Token
         /// </summary>
         public string token = null;
+        /// <summary>
+        /// Format of how the user wants to receive the data (in redis and such)
+        /// </summary>
         public Format format = Format.Pipe;
+        /// <summary>
+        /// List of definitions of what to watch
+        /// </summary>
         public List<FeedItem> Items = new List<FeedItem>();
 
+        /// <summary>
+        /// Generate a new private token
+        /// </summary>
         public void GenerateToken()
         {
             Random random = new Random((int)DateTime.Now.Ticks);
@@ -56,6 +65,11 @@ namespace dispatcherd
             token = builder.ToString();
         }
 
+        /// <summary>
+        /// Convert an XML input to list of items
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static List<FeedItem> String2List(string list)
         {
             try
@@ -115,6 +129,10 @@ namespace dispatcherd
             return null;
         }
 
+        /// <summary>
+        /// Create a new empty subscription with a specific name
+        /// </summary>
+        /// <param name="name"></param>
         public Subscription(string name)
         {
             Name = name;
@@ -126,6 +144,12 @@ namespace dispatcherd
             Name = name;
         }
 
+        /// <summary>
+        /// This will convert indentical instance of FeedItem to a corresponding FeedItem in a database, it is necessary
+        /// in order to delete it from db
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public FeedItem RetrieveItem(FeedItem item)
         {
             lock (Items)
@@ -142,6 +166,11 @@ namespace dispatcherd
             return null;
         }
 
+        /// <summary>
+        /// Insert a list of feed items to db
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public int Insert(List<FeedItem> list)
         {
             int result = 0;
@@ -156,9 +185,15 @@ namespace dispatcherd
                     }
                 }
             }
+            Core.SaveNeeded = true;
             return result;
         }
 
+        /// <summary>
+        /// Delete a list of feed item instance from a db
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public int Delete(List<FeedItem> list)
         {
             int result = 0;
@@ -174,9 +209,16 @@ namespace dispatcherd
                     }
                 }
             }
+            Core.SaveNeeded = true;
             return result;
         }
 
+        /// <summary>
+        /// Authenticate
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="token">Token</param>
+        /// <returns></returns>
         public static Subscription login(string name, string token)
         {
             lock (Core.DB)
@@ -192,6 +234,11 @@ namespace dispatcherd
             return null;
         }
 
+        /// <summary>
+        /// fix me
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static List<FeedItem> JSON2List(string list)
         {
             try

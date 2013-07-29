@@ -49,6 +49,10 @@ namespace dispatcherd
         /// Database of subscriptions
         /// </summary>
         public static Dictionary<string, Subscription> DB = new Dictionary<string, Subscription>();
+        /// <summary>
+        /// Set this to true to make core thread save the db
+        /// </summary>
+        public static bool SaveNeeded = false;
 
         public static void DebugLog(string text, int Verbosity = 1)
         {
@@ -194,6 +198,10 @@ namespace dispatcherd
                 RecentChanges.Init();
                 while (IsRunning)
                 {
+                    if (SaveNeeded)
+                    {
+                        Save();
+                    }
                     Thread.Sleep(100);
                 }
             }

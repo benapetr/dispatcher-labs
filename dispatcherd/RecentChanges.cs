@@ -328,8 +328,17 @@ namespace dispatcherd
             return true;
         }
 
+        /// <summary>
+        /// This is a cache for wiki so that we don't need to spend so much CPU time resolving the wiki every time
+        /// thanks to it we can put strings with name of wikis in a hashtable with corresponding wiki instances
+        /// </summary>
         public static Dictionary<string, Wiki> Cache = new Dictionary<string, Wiki>();
 
+        /// <summary>
+        /// This function will resolve the wiki instance from a string, the string is a channel name
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <returns></returns>
         public static Wiki getWiki(string channel)
         {
             lock (Cache)

@@ -19,12 +19,34 @@ namespace dispatcherd
 {
     public class Connection
     {
+        /// <summary>
+        /// Network stream
+        /// </summary>
         public NetworkStream ns;
+        /// <summary>
+        /// Stream reader
+        /// </summary>
         private StreamReader streamReader;
         private StreamWriter streamWriter;
         public bool IsConnected = true;
-        public bool IsAuthenticated = false;
-        public Subscription feed2 = null;
+        /// <summary>
+        /// If current user is authenticated to subscription
+        /// </summary>
+        public bool IsAuthenticated
+        {
+            get
+            {
+                if (subscription != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+        /// <summary>
+        /// This is a subscription they are authenticated to :)
+        /// </summary>
+        public Subscription subscription = null;
 
         public Connection(TcpClient client)
         {
@@ -92,15 +114,14 @@ namespace dispatcherd
                             {
                                 lock (Core.DB)
                                 {
-                                    if (!Core.DB.ContainsKey(feed2.Name))
+                                    if (!Core.DB.ContainsKey(subscription.Name))
                                     {
                                         Send("E007: No such feed");
                                         continue;
                                     }
-                                    Core.DB.Remove(feed2.Name);
+                                    Core.DB.Remove(subscription.Name);
                                 }
-                                feed2 = null;
-                                IsAuthenticated = false;
+                                subscription = null;
                                 Send("OK");
                                 continue;
                             }
@@ -119,10 +140,9 @@ namespace dispatcherd
                                     }
                                     Core.DB.Remove(f2.Name);
                                 }
-                                if (f2 == feed2)
+                                if (f2 == subscription)
                                 {
-                                    feed2 = null;
-                                    IsAuthenticated = false;
+                                    subscription = null;
                                 }
                                 Send("OK");
                                 continue;
@@ -136,9 +156,8 @@ namespace dispatcherd
                             Subscription f1 = Subscription.login(parameters[0], parameters[1]);
                             if (f1 != null)
                             {
-                                IsAuthenticated = true;
                                 Send("OK");
-                                feed2 = f1;
+                                subscription = f1;
                                 continue;
                             }
                         }
@@ -171,7 +190,7 @@ namespace dispatcherd
                                     Send("E060: Invalid xml");
                                     continue;
                                 }
-                                Send(feed2.Insert(InsertData).ToString());
+                                Send(subscription.Insert(InsertData).ToString());
                                 continue;
                             case "json":
                                 InsertData = Subscription.JSON2List(sb.ToString());
@@ -180,7 +199,7 @@ namespace dispatcherd
                                     Send("E062: Invalid JSON");
                                     continue;
                                 }
-                                Send(feed2.Insert(InsertData).ToString());
+                                Send(subscription.Insert(InsertData).ToString());
                                 continue;
                         }
                         Send("E010: Unknown format of data");
@@ -211,7 +230,7 @@ namespace dispatcherd
                                     Send("E060: Invalid xml");
                                     continue;
                                 }
-                                Send(feed2.Delete(RemoveData).ToString());
+                                Send(subscription.Delete(RemoveData).ToString());
                                 continue;
                             case "json":
                                 RemoveData = Subscription.JSON2List(sb02.ToString());
@@ -220,7 +239,7 @@ namespace dispatcherd
                                     Send("E062: Invalid json");
                                     continue;
                                 }
-                                Send(feed2.Delete(RemoveData).ToString());
+                                Send(subscription.Delete(RemoveData).ToString());
                                 continue;
                         }
                         Send("E010-Unknown format of data");
