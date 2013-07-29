@@ -74,12 +74,16 @@ if type(args.remove) is str:
         _socket.connect((DispatcherHost, DispatcherPort))
         Login(_socket, args.remove, args)
         print "Attempting to remove data from subscription"
+        _socket.send("remove xml\n")
+        _socket.send(CreateXml(args) + "\n")
+        print "Removed: " + _socket.recv(64)
         _socket.close()
+        _socket.close()
+        sys.exit(0)
 
 if type(args.insert) is str:
     if ParameterCheck(args):
         print "Logging to a subscription"
-        print CreateXml(args)
         _socket = socket.socket();
         _socket.connect((DispatcherHost, DispatcherPort))
         Login(_socket, args.insert, args)
