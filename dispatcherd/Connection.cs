@@ -244,6 +244,42 @@ namespace dispatcherd
                         }
                         Send("E010-Unknown format of data");
                         continue;
+                    case "list":
+                        if (!IsAuthenticated)
+                        {
+                            Send("E020: Authentication was not completed");
+                            continue;
+                        }
+                        break;
+                    case "format":
+                        if (!IsAuthenticated)
+                        {
+                            Send("E020: Authentication was not completed");
+                            continue;
+                        }
+                        if (parameters.Count > 0)
+                        {
+                            switch (parameters[0])
+                            {
+                                case "pipe":
+                                    subscription.format = Subscription.Format.Pipe;
+                                    Send("OK");
+                                    continue;
+                                case "xml":
+                                    subscription.format = Subscription.Format.XML;
+                                    Send("OK");
+                                    continue;
+                                case "json":
+                                    subscription.format = Subscription.Format.JSON;
+                                    Send("OK");
+                                    continue;
+                            }
+                        }
+                        Send("E012: Invalid format");
+                        continue;
+                    case "info":
+                        Send("I have " + Terminal.Connections.ToString() + " connections and " + Core.DB.Count.ToString() + " subscriptions, I am now watching " + Core.WD.Count.ToString() + " wikis");
+                        continue;
                     default:
                         Send("E006: Command not understood");
                         continue;

@@ -94,7 +94,7 @@ namespace dispatcherd
                             XmlNode f3 = file.CreateElement("item");
                             f3.InnerText = f2.wiki;
                             XmlAttribute page = file.CreateAttribute("page");
-                            page.Value = f2.PageName;
+                            page.Value = f2.Title;
                             XmlAttribute pr = file.CreateAttribute("pagerx");
                             pr.Value = f2.IsRegex.ToString();
                             XmlAttribute user = file.CreateAttribute("user");
@@ -105,6 +105,9 @@ namespace dispatcherd
                             XmlAttribute us = file.CreateAttribute("ux");
                             us.Value = f2.UsernameIsRegex.ToString();
                             f3.Attributes.Append(us);
+                            XmlAttribute ok = file.CreateAttribute("active");
+                            ok.Value = f2.Active.ToString();
+                            f3.Attributes.Append(ok);
                             feed.AppendChild(f3);
                         }
                     }
@@ -160,10 +163,17 @@ namespace dispatcherd
                                 Core.DebugLog("Loading item " + item.InnerText);
                                 FeedItem fx = new FeedItem();
                                 fx.wiki = item.InnerText;
-                                fx.PageName = item.Attributes["page"].Value;
+                                fx.Title = item.Attributes["page"].Value;
                                 fx.IsRegex = bool.Parse(item.Attributes["pagerx"].Value);
                                 fx.UsernameIsRegex = bool.Parse(item.Attributes["ux"].Value);
                                 fx.Username = item.Attributes["user"].Value;
+                                foreach (XmlAttribute xa in item.Attributes)
+                                {
+                                    if (xa.Name == "active")
+                                    {
+                                        fx.Active = bool.Parse(xa.Value);
+                                    }
+                                }
                                 x.Items.Add(fx);
                             }
                         }

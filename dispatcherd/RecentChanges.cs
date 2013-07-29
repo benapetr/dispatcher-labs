@@ -313,19 +313,42 @@ namespace dispatcherd
         /// <returns></returns>
         private static bool Matches(FeedItem definition, ChangeItem diff)
         {
-            if (!definition.IsRegex && definition.PageName != "" && definition.PageName != diff.Title)
+            try
             {
+                if (!definition.IsRegex && definition.Title != "" && definition.Title != diff.Title)
+                {
+                    return false;
+                }
+                if (definition.IsRegex)
+                {
+                    System.Text.RegularExpressions.Regex r1 = new System.Text.RegularExpressions.Regex(definition.Title);
+                    if (!r1.IsMatch(diff.Title))
+                    {
+                        return false;
+                    }
+                }
+                if (!definition.UsernameIsRegex && definition.Username != "" && definition.Username != diff.User)
+                {
+                    return false;
+                }
+                if (definition.UsernameIsRegex)
+                {
+                    System.Text.RegularExpressions.Regex r2 = new System.Text.RegularExpressions.Regex(definition.Username);
+                    if (!r2.IsMatch(diff.User))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            catch (Exception fail)
+            {
+                Core.DebugLog("Exception while parsing definition, disabled it: " + fail.ToString());
+                // exception handling is CPU expensive and this looks like invalid regex or something
+                definition.Active = false;
+                Core.SaveNeeded = true;
                 return false;
             }
-            if (definition.IsRegex)
-            {
-                return false;
-            }
-            if (!definition.UsernameIsRegex && definition.Username != "" && definition.Username != diff.User)
-            {
-                return false;
-            }
-            return true;
         }
 
         /// <summary>

@@ -23,11 +23,23 @@ namespace dispatcherd
     /// </summary>
     public class FeedItem
     {
+        /// <summary>
+        /// Name of wiki
+        /// </summary>
         public string wiki = null;
-        public string PageName = "";
+        /// <summary>
+        /// Title of page
+        /// </summary>
+        public string Title = "";
+        /// <summary>
+        /// If the title is regex
+        /// </summary>
         public bool IsRegex = false;
-        public int Namespace = 0;
+        /// <summary>
+        /// Name of user to watch
+        /// </summary>
         public string Username = "";
+        public bool Active = true;
         public bool UsernameIsRegex = false;
     }
 
@@ -99,12 +111,12 @@ namespace dispatcherd
                             if (attribute.Name == "page_rx")
                             {
                                 i.IsRegex = true;
-                                i.PageName = attribute.Value;
+                                i.Title = attribute.Value;
                             }
                             if (attribute.Name == "page")
                             {
                                 i.IsRegex = false;
-                                i.PageName = attribute.Value;
+                                i.Title = attribute.Value;
                             }
                             if (attribute.Name == "user_rx")
                             {
@@ -158,7 +170,7 @@ namespace dispatcherd
                 foreach (FeedItem xx in Items)
                 {
                     if (xx.IsRegex == item.IsRegex && xx.wiki == item.wiki &&
-                        xx.PageName == item.PageName && xx.Username == item.Username)
+                        xx.Title == item.Title && xx.Username == item.Username)
                     {
                         return xx;
                     }

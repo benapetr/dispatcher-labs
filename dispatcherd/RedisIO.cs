@@ -79,7 +79,7 @@ namespace dispatcherd
         /// <param name="wiki"></param>
         public static void RedisSend(ChangeItem diff, Subscription subscription, Wiki wiki)
         {
-            Core.redis.RightPush(subscription.Name, Format2Redis(diff, subscription.format, wiki));
+            Core.redis.LeftPush(subscription.Name, Format2Redis(diff, subscription.format, wiki));
         }
     }
 }
