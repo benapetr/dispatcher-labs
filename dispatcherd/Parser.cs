@@ -12,52 +12,52 @@ using System;
 
 namespace dispatcherd
 {
-	public class Parser
-	{
-		private static void Help()
-		{
-			Console.WriteLine("Bot dispatcher daemon\n\n" +
-			                  "Parameters:\n" +
-			                  "    -v | --verbose: Increase verbosity\n" +
-			                  "    --help: Display this help\n\n" +
-			                  "This project is open source licensed under GNU GPLv3");
-		}
+    public class Parser
+    {
+        private static void Help()
+        {
+            Console.WriteLine("Bot dispatcher daemon\n\n" +
+                              "Parameters:\n" +
+                              "    -v | --verbose: Increase verbosity\n" +
+                              "    --help: Display this help\n\n" +
+                              "This project is open source licensed under GNU GPLv3");
+        }
 
-		public static bool Parse (string[] d)
-		{
-			foreach (string parameter in d)
-			{
-				if (parameter.StartsWith("--"))
-				{
-					switch(parameter)
-					{
-					case "--verbose":
-						Configuration.System.Verbosity++;
-						break;
-					case "--help":
-						Help();
-						return false;
-					case "--trafficdump":
-						Configuration.Network.TrafficDump = true;
-						break;
-					}
-					continue;
-				}
-				if (parameter.StartsWith("-"))
-				{
-					foreach (char x in parameter)
-					{
-						switch (x)
-						{
-						case 'v':
-							Configuration.System.Verbosity++;
-							break;
-						}
-					}
-				}
-			}
-			return true;
-		}
-	}
+        public static bool Parse(string[] d)
+        {
+            foreach (string parameter in d)
+            {
+                if (parameter.StartsWith("--"))
+                {
+                    switch (parameter)
+                    {
+                        case "--verbose":
+                            Configuration.System.Verbosity++;
+                            break;
+                        case "--help":
+                            Help();
+                            return false;
+                        case "--trafficdump":
+                            Configuration.Network.TrafficDump = true;
+                            break;
+                    }
+                    continue;
+                }
+                if (parameter.StartsWith("-"))
+                {
+                    foreach (char x in parameter)
+                    {
+                        switch (x)
+                        {
+                            case 'v':
+                                Configuration.System.Verbosity++;
+                                break;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+    }
 }
 

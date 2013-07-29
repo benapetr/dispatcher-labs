@@ -17,9 +17,18 @@ using System.Threading;
 
 namespace dispatcherd
 {
+    /// <summary>
+    /// Handles irc
+    /// </summary>
 	public class IRC
 	{
+        /// <summary>
+        /// Hostname
+        /// </summary>
 		public string Host;
+        /// <summary>
+        /// Port
+        /// </summary>
 		public int Port;
 
 		public string Nick;
