@@ -7,6 +7,8 @@ import sys
 import socket
 
 def Login(socket, s, v):
+    if (v.verbosity > 0):
+        print "sending data: " + "auth " + s + " " + v.token
     socket.send("auth " + s + " " + v.token + "\n");
     result = socket.recv(256);
     if (not "OK" in result):
@@ -60,12 +62,16 @@ parser.add_argument('--subscribe', dest='subscription', help='Create a subscript
 parser.add_argument('--insert', dest='insert', help='Insert a data to subscription with a given name. You need to provide token, wiki and page or user (or both)')
 parser.add_argument('--remove', dest='remove', help='Remove a data from subscription with a given name. You need to provide token, wiki and page or user (or both)')
 parser.add_argument('--wiki', dest='wiki', help='Specify a name of wiki to watch, this argument is needed for insert and remove')
-parser.add_argument('--page', dest='page', help='Name of a page to watch (case sensitive)');
-parser.add_argument('--pagerx', dest='px', help='Regular expression the page name should match');
-parser.add_argument('--user', dest='user', help='Username to watch');
-parser.add_argument('--userrx', dest='ux', help='Regular expression that username should match');
+parser.add_argument('--page', dest='page', help='Name of a page to watch (case sensitive)')
+parser.add_argument('--pagerx', dest='px', help='Regular expression the page name should match')
+parser.add_argument('--user', dest='user', help='Username to watch')
+parser.add_argument('--list', dest='list', help='List all items in a subscription')
+parser.add_argument('--verbosity', dest='verbosity', type=int, help='Higher the number is, more verbose I will be')
+parser.add_argument('--userrx', dest='ux', help='Regular expression that username should match')
 
 args = parser.parse_args()
+if not type(args.verbosity) is int:
+    args.verbosity = 0
 
 if type(args.remove) is str:
     if ParameterCheck(args):
@@ -74,6 +80,9 @@ if type(args.remove) is str:
         _socket.connect((DispatcherHost, DispatcherPort))
         Login(_socket, args.remove, args)
         print "Attempting to remove data from subscription"
+        if (args.verbosity > 0):
+            print "sending data: remove xml"
+            print CreateXml(args)
         _socket.send("remove xml\n")
         _socket.send(CreateXml(args) + "\n")
         print "Removed: " + _socket.recv(64)
@@ -88,6 +97,9 @@ if type(args.insert) is str:
         _socket.connect((DispatcherHost, DispatcherPort))
         Login(_socket, args.insert, args)
         print "Attempting to insert data"
+        if (args.verbosity > 0):
+            print "sending data: insert xml"
+            print CreateXml(args)
         _socket.send("insert xml\n")
         _socket.send(CreateXml(args) + "\n")
         print "Inserted: " + _socket.recv(64)
@@ -97,10 +109,8 @@ if type(args.insert) is str:
 if type(args.subscription) is str:
         print "Attempting to create new subscription " + args.subscription
         _socket = socket.socket()
-# why the fuck we need to use double (( wtf ))
         _socket.connect((DispatcherHost, DispatcherPort))
         _socket.send("subscribe " + args.subscription + "\n")
-# no ReadLine? Poor python
         print _socket.recv(256);
         _socket.close()
         sys.exit(0);
@@ -111,10 +121,8 @@ if type(args.un_subscription) is str:
             sys.exit(-1)
         print "Attempting to remove subscription " + args.un_subscription
         _socket = socket.socket()
-# why the fuck we need to use double (( wtf ))
         _socket.connect((DispatcherHost, DispatcherPort))
         _socket.send("unsubscribe " + args.un_subscription + " " + args.token + "\n")
-# no ReadLine? Poor python
         print _socket.recv(256)
         _socket.close()
         sys.exit(0)
