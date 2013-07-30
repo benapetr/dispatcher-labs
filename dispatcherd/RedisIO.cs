@@ -53,7 +53,7 @@ namespace dispatcherd
                 }
 
                 XmlAttribute ts = d.CreateAttribute("timestamp");
-                ts.Value = diff.Time.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+                ts.Value = diff.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
                 node.Attributes.Append(ts);
 
 
@@ -79,7 +79,9 @@ namespace dispatcherd
         /// <param name="wiki"></param>
         public static void RedisSend(ChangeItem diff, Subscription subscription, Wiki wiki)
         {
-            Core.redis.LeftPush(subscription.Name, Format2Redis(diff, subscription.format, wiki));
+            string data = Format2Redis(diff, subscription.format, wiki);
+            Core.DebugLog("Sending to redis: Q " + subscription.Name + ": " + data, 6);
+            Core.redis.LeftPush(subscription.Name, data);
         }
     }
 }

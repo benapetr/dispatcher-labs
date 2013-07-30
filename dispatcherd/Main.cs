@@ -211,6 +211,7 @@ namespace dispatcherd
                     if (SaveNeeded)
                     {
                         Save();
+                        SaveNeeded = false;
                     }
                     Thread.Sleep(100);
                 }

@@ -87,7 +87,7 @@ namespace dispatcherd
         /// <summary>
         /// Timestamp
         /// </summary>
-        public DateTime Time;
+        public DateTime Timestamp;
 
         /// <summary>
         /// Action
