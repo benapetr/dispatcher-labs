@@ -83,7 +83,8 @@ namespace dispatcherd
                 foreach (Subscription x in f)
                 {
                     XmlNode feed = file.CreateElement("feed");
-                    feed.InnerText = x.Name;
+                    XmlAttribute name = file.CreateAttribute("n");
+                    name.Value = x.Name;
                     XmlAttribute tx = file.CreateAttribute("token");
                     tx.Value = x.token;
                     feed.Attributes.Append(tx);
@@ -147,7 +148,7 @@ namespace dispatcherd
                     Core.DebugLog("Loading child nodes");
                     foreach (XmlNode feed in file.ChildNodes[0])
                     {
-                        Core.DebugLog("Loading " + feed.InnerText);
+                        Core.DebugLog("Loading " + feed.Attributes["n"]);
                         Subscription x = new Subscription(feed.InnerText);
                         foreach (XmlAttribute x2 in feed.Attributes)
                         {
