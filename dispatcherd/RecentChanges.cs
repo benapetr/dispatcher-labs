@@ -437,6 +437,7 @@ namespace dispatcherd
                             {
                                 if (item.wiki == wiki.Name)
                                 {
+                                    Core.DebugLog("Checking if filter matches for subscription " + subscription.Name, 8);
                                     if (Matches(item, c))
                                     {
                                         RedisIO.RedisSend(c, subscription, wiki);

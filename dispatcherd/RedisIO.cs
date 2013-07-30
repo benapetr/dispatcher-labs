@@ -56,8 +56,6 @@ namespace dispatcherd
                 ts.Value = diff.Timestamp.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
                 node.Attributes.Append(ts);
 
-
-
                 return node.InnerXml;
             }
 

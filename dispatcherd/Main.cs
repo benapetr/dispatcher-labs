@@ -87,6 +87,7 @@ namespace dispatcherd
                     name.Value = x.Name;
                     XmlAttribute tx = file.CreateAttribute("token");
                     tx.Value = x.token;
+                    feed.Attributes.Append(name);
                     feed.Attributes.Append(tx);
                     lock (x.Items)
                     {

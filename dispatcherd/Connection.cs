@@ -63,7 +63,7 @@ namespace dispatcherd
 
         public void Exec()
         {
-            while (IsConnected)
+            while (IsConnected && !streamReader.EndOfStream)
             {
                 string line = streamReader.ReadLine();
                 string command = line;
