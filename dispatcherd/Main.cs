@@ -177,15 +177,26 @@ namespace dispatcherd
                                 Core.DebugLog("Loading item " + item.InnerText);
                                 FeedItem fx = new FeedItem();
                                 fx.wiki = item.InnerText;
-                                fx.Title = item.Attributes["page"].Value;
-                                fx.IsRegex = bool.Parse(item.Attributes["pagerx"].Value);
-                                fx.UsernameIsRegex = bool.Parse(item.Attributes["ux"].Value);
-                                fx.Username = item.Attributes["user"].Value;
-                                foreach (XmlAttribute xa in item.Attributes)
+                                foreach (XmlAttribute XmlAttribute2 in item.Attributes)
                                 {
-                                    if (xa.Name == "active")
+                                    switch (XmlAttribute2.Name)
                                     {
-                                        fx.Active = bool.Parse(xa.Value);
+                                        case "page":
+                                            fx.Title = XmlAttribute2.Value;
+                                            break;
+                                        case "pagerx":
+                                            fx.IsRegex = bool.Parse(XmlAttribute2.Value);
+                                            break;
+                                        case "user":
+                                            fx.Username = XmlAttribute2.Value;
+                                            break;
+                                        case "ux":
+                                            fx.UsernameIsRegex = bool.Parse(XmlAttribute2.Value);
+                                            break;
+                                    }
+                                    if (XmlAttribute2.Name == "active")
+                                    {
+                                        fx.Active = bool.Parse(XmlAttribute2.Value);
                                     }
                                 }
                                 x.Items.Add(fx);
