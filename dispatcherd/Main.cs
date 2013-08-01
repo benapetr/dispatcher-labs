@@ -172,7 +172,7 @@ namespace dispatcherd
                         
                         if (feed.ChildNodes != null && feed.ChildNodes.Count > 0)
                         {
-                            foreach (XmlNode item in feed.ChildNodes[0])
+                            foreach (XmlNode item in feed.ChildNodes)
                             {
                                 Core.DebugLog("Loading item " + item.InnerText);
                                 FeedItem fx = new FeedItem();
@@ -202,7 +202,7 @@ namespace dispatcherd
                                 x.Items.Add(fx);
                             }
                         }
-                        DB.Add(feed.InnerText, x);
+                        DB.Add(name, x);
                     }
                 }
             }
