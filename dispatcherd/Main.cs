@@ -149,15 +149,27 @@ namespace dispatcherd
                     Core.DebugLog("Loading child nodes");
                     foreach (XmlNode feed in file.ChildNodes[0])
                     {
-                        Core.DebugLog("Loading " + feed.Attributes["n"]);
-                        Subscription x = new Subscription(feed.InnerText);
+                        string token = null;
+                        string name = null;
                         foreach (XmlAttribute x2 in feed.Attributes)
                         {
-                            if (x2.Name == "token")
+                            switch (x2.Name)
                             {
-                                x.token = x2.Value;
+                                case "n":
+                                    name = x2.Value;
+                                    break;
+                                case "token":
+                                    token = x2.Value;
+                                    break;
                             }
                         }
+                        if (name == null)
+                        {
+                            throw new Exception("This xml node is missing n value " + feed.InnerXml);
+                        }
+                        Core.DebugLog("Loading " + name);
+                        Subscription x = new Subscription(name); ;
+                        
                         if (feed.ChildNodes != null && feed.ChildNodes.Count > 0)
                         {
                             foreach (XmlNode item in feed.ChildNodes[0])

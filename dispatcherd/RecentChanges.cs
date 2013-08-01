@@ -131,6 +131,15 @@ namespace dispatcherd
         /// </summary>
         private static Thread thread;
 
+        private static bool working = false;
+        public static bool IsWorking
+        {
+            get
+            {
+                return working;
+            }
+        }
+
         /// <summary>
         /// This will start this subsystem in own thread
         /// </summary>
@@ -384,6 +393,7 @@ namespace dispatcherd
 
         private static void Exec()
         {
+            working = true;
             string nick = "bd_" + DateTime.Now.ToBinary().ToString().Substring(8);
             IRC irc = new IRC(nick, 6667, "irc.wikimedia.org");
             irc.Connect();
@@ -450,6 +460,8 @@ namespace dispatcherd
                     }
                 }
             }
+            Core.Log("FATAL: irc recent changes feed disconnected!");
+            working = false;
         }
     }
 }
