@@ -409,6 +409,7 @@ namespace dispatcherd
                     string channel = line.Substring(9);
                     if (!channel.Contains(" "))
                     {
+                        Core.DebugLog("Ignoring line that contains no useful data (1): " + line, 12);
                         continue;
                     }
                     channel = line.Substring(0, line.IndexOf(" "));
@@ -421,6 +422,7 @@ namespace dispatcherd
                     ChangeItem c = String2Change(line);
                     if (c == null)
                     {
+                        Core.DebugLog("Ignoring line that contains no useful data: " + line, 12);
                         continue;
                     }
                     // check all subscriptions

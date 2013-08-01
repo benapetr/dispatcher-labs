@@ -199,6 +199,7 @@ namespace dispatcherd
             if (Parser.Parse(args))
             {
                 Log("Dispatcher daemon");
+                DebugLog("Verbosity level: " + Configuration.System.Verbosity.ToString());
                 Load();
                 Log("Initializing terminal");
                 Terminal.Init();
