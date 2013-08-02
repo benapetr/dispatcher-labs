@@ -235,7 +235,7 @@ namespace dispatcherd
                 return null;
             }
 
-            change.User = change.User.Substring(0, change.User.IndexOf(" " + variables.color + "5*") + 4);
+            change.User = change.User.Substring(0, change.User.IndexOf(variables.color + " " + variables.color + "5*"));
 
             if (!text.Contains(variables.color + "5"))
             {

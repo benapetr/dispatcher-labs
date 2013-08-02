@@ -29,6 +29,7 @@ namespace dispatcherd
         /// <returns></returns>
         public static string Format2Redis(ChangeItem diff, Subscription.Format format, Wiki wiki)
         {
+            Core.DebugLog("User: " + diff.User);
             if (format == Subscription.Format.XML)
             {
                 XmlDocument d = new XmlDocument();
