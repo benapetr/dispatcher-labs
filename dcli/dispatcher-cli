@@ -140,7 +140,7 @@ if type(args.alter) is str:
     print "Logging to a subscription"
     _socket = socket.socket();
     _socket.connect((DispatcherHost, DispatcherPort))
-    Login(_socket, args.insert, args)
+    Login(_socket, args.alter, args)
     print "Attempting to alter " + args.alter
     if str is type(args.format):
         print "Changing a format"
