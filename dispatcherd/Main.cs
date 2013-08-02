@@ -22,7 +22,7 @@ namespace dispatcherd
         /// <summary>
         /// Redis server
         /// </summary>
-        public static Redis redis;
+        public static ServiceStack.Redis.RedisClient redis;
         /// <summary>
         /// This is a lock used for Save()
         /// </summary>
@@ -229,7 +229,7 @@ namespace dispatcherd
                 DebugLog("Loading writer");
                 Writer.Init();
                 Log("Redis");
-                redis = new Redis("tools-redis");
+                redis = new ServiceStack.Redis.RedisClient("tools-redis");
                 Log("Connecting to feed");
                 RecentChanges.Init();
                 while (IsRunning)

@@ -70,6 +70,13 @@ namespace dispatcherd
                     + diff.Summary;
         }
 
+        private static byte[] GetBytes(string str)
+        {
+            byte[] bytes = new byte[str.Length * sizeof(char)];
+            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
+            return bytes;
+        }
+
         /// <summary>
         /// This function will send stuff to redis queue
         /// </summary>
@@ -80,7 +87,7 @@ namespace dispatcherd
         {
             string data = Format2Redis(diff, subscription.format, wiki);
             Core.DebugLog("Sending to redis: Q " + subscription.Name + ": " + data, 6);
-            Core.redis.RightPush(subscription.Name, data);
+            Core.redis.LPush(subscription.Name, GetBytes(data));
         }
     }
 }
