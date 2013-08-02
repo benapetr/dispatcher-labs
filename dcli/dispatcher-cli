@@ -144,7 +144,7 @@ if type(args.alter) is str:
     print "Attempting to alter " + args.alter
     if str is type(args.format):
         print "Changing a format"
-        _socket.send("format " + args.format);
+        _socket.send("format " + args.format + "\n");
         print _socket.recv(256)
     _socket.close()
     sys.exit(0)
