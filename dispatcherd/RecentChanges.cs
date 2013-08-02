@@ -245,18 +245,17 @@ namespace dispatcherd
 
             text = text.Substring(text.IndexOf(variables.color + "5"));
 
-            if (!text.Contains("("))
+            if (text.Contains("("))
             {
-                Core.DebugLog("Parser error #8", 6);
-                return null;
-            }
+                change.ChangeSize = text.Substring(text.IndexOf("(") + 1);
 
-            change.ChangeSize = text.Substring(text.IndexOf("(") + 1);
+                if (!change.ChangeSize.Contains(")"))
+                {
+                    Core.DebugLog("Parser error #10", 6);
+                    return null;
+                }
 
-            if (!change.ChangeSize.Contains(")"))
-            {
-                Core.DebugLog("Parser error #10", 6);
-                return null;
+                change.ChangeSize = change.ChangeSize.Substring(0, change.ChangeSize.IndexOf(")"));
             }
 
             change.ChangeSize = change.ChangeSize.Substring(0, change.ChangeSize.IndexOf(")"));
