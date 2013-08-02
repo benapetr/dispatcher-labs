@@ -172,8 +172,13 @@ namespace dispatcherd
                         {
                             throw new Exception("This xml node is missing n value " + feed.InnerXml);
                         }
+                        if (token == null)
+                        {
+                            throw new Exception("This xml node is missing token value " + feed.InnerXml);
+                        }
                         Core.DebugLog("Loading " + name);
-                        Subscription x = new Subscription(name); ;
+                        Subscription x = new Subscription(name);
+                        x.token = token;
                         
                         if (feed.ChildNodes != null && feed.ChildNodes.Count > 0)
                         {
