@@ -402,6 +402,7 @@ namespace dispatcherd
             {
                 foreach (Wiki xx in Core.WD.Values)
                 {
+                    Core.DebugLog(xx.Channel, 2);
                     irc.Join(xx.Channel);
                     Thread.Sleep(200);
                 }
@@ -423,7 +424,7 @@ namespace dispatcherd
                         Core.DebugLog("Ignoring line that contains no useful data (1): " + line, 12);
                         continue;
                     }
-                    channel = line.Substring(0, line.IndexOf(" "));
+                    channel = channel.Substring(0, channel.IndexOf(" "));
                     Wiki wiki = getWiki(channel);
                     Core.DebugLog("Resolving wiki: " + channel, 15);
                     if (wiki == null)
