@@ -414,9 +414,9 @@ namespace dispatcherd
                 }
                 Traffic(line, true);
 
-                if (line.StartsWith(":PRIVMSG"))
+                if (line.Contains(" PRIVMSG "))
                 {
-                    string channel = line.Substring(9);
+                    string channel = line.Substring(line.IndexOf(" PRIVMSG ") + 9);
                     if (!channel.Contains(" "))
                     {
                         Core.DebugLog("Ignoring line that contains no useful data (1): " + line, 12);
