@@ -61,13 +61,176 @@ namespace dispatcherd
             streamWriter.Flush();
         }
 
+        private bool Subscribe(string line, List<string> parameters)
+        {
+            // check if name is correct
+            if (parameters.Count < 1)
+            {
+                Send("E001: Invalid name");
+                return false;
+            }
+            Subscription feed;
+            if (Core.DB.ContainsKey(parameters[0]))
+            {
+                Send("E002: This subscription exist");
+                return false;
+            }
+            feed = new Subscription(parameters[0]);
+            feed.GenerateToken();
+            lock (Core.DB)
+            {
+                if (Core.DB.ContainsKey(parameters[0]))
+                {
+                    Send("E002: This subscription exist");
+                    return false;
+                }
+                Core.DB.Add(parameters[0], feed);
+                Send("TOKEN: " + feed.token);
+                Core.Save();
+            }
+            return true;
+        }
+
+        private bool Unsubscribe(string line, List<string> parameters)
+        {
+            if (parameters.Count < 2)
+            {
+                if (IsAuthenticated)
+                {
+                    lock (Core.DB)
+                    {
+                        if (!Core.DB.ContainsKey(subscription.Name))
+                        {
+                            Send("E007: No such feed");
+                            return false;
+                        }
+                        Core.DB.Remove(subscription.Name);
+                    }
+                    subscription = null;
+                    Send("OK");
+                    return true;
+                }
+            }
+            else
+            {
+                Subscription f2 = Subscription.login(parameters[0], parameters[1]);
+                if (f2 != null)
+                {
+                    lock (Core.DB)
+                    {
+                        if (!Core.DB.ContainsKey(f2.Name))
+                        {
+                            Send("E007: No such feed");
+                            return false;
+                        }
+                        Core.DB.Remove(f2.Name);
+                    }
+                    if (f2 == subscription)
+                    {
+                        subscription = null;
+                    }
+                    Send("OK");
+                    return true;
+                }
+            }
+            Send("E005: Invalid token or name");
+            return false;
+        }
+
+        private bool Insert(string line, List<string> parameters)
+        {
+            if (!IsAuthenticated)
+            {
+                Send("E020: Authentication was not completed");
+                return false;
+            }
+            if (parameters.Count < 1)
+            {
+                Send("E008: Missing parameter for insert");
+                return false;
+            }
+            List<FeedItem> InsertData;
+            StringBuilder sb = new StringBuilder("");
+            switch (parameters[0])
+            {
+                case "xml":
+                    while (!line.Contains("</items>"))
+                    {
+                        line = streamReader.ReadLine();
+                        sb.Append(line + "\n");
+                    }
+                    InsertData = Subscription.String2List(sb.ToString());
+                    if (InsertData == null)
+                    {
+                        Send("E060: Invalid xml");
+                        return false;
+                    }
+                    Send(subscription.Insert(InsertData).ToString());
+                    return true;
+                case "json":
+                    InsertData = Subscription.JSON2List(sb.ToString());
+                    if (InsertData == null)
+                    {
+                        Send("E062: Invalid JSON");
+                        return false;
+                    }
+                    Send(subscription.Insert(InsertData).ToString());
+                    return true;
+            }
+            Send("E010: Unknown format of data");
+            return false;
+        }
+
+        private bool Remove(string line, List<string> parameters)
+        {
+            if (!IsAuthenticated)
+            {
+                Send("E020: Authentication was not completed");
+                return false;
+            }
+            if (parameters.Count < 1)
+            {
+                Send("E008: Missing parameter for delete");
+                return false;
+            }
+            List<FeedItem> RemoveData;
+            StringBuilder sb02 = new StringBuilder("");
+            switch (parameters[0])
+            {
+                case "xml":
+                    while (!line.Contains("</items>"))
+                    {
+                        sb02.Append(line + "\n");
+                    }
+                    RemoveData = Subscription.String2List(sb02.ToString());
+                    if (RemoveData == null)
+                    {
+                        Send("E060: Invalid xml");
+                        return false;
+                    }
+                    Send(subscription.Delete(RemoveData).ToString());
+                    return true;
+                case "json":
+                    RemoveData = Subscription.JSON2List(sb02.ToString());
+                    if (RemoveData == null)
+                    {
+                        Send("E062: Invalid json");
+                        return false;
+                    }
+                    Send(subscription.Delete(RemoveData).ToString());
+                    return true;
+            }
+            Send("E010-Unknown format of data");
+            return false;
+        }
+
         public void Exec()
         {
             while (IsConnected && !streamReader.EndOfStream)
             {
                 string line = streamReader.ReadLine();
                 string command = line;
-                List<string> parameters = new List<string>(); ;
+                List<string> parameters = new List<string>();
                 if (command.Contains(" "))
                 {
                     command = command.Substring(0, command.IndexOf(" "));
@@ -81,74 +244,10 @@ namespace dispatcherd
                         ns.Close();
                         return;
                     case "subscribe":
-                        // check if name is correct
-                        if (parameters.Count < 1)
-                        {
-                            Send("E001: Invalid name");
-                            continue;
-                        }
-                        Subscription feed;
-                        if (Core.DB.ContainsKey(parameters[0]))
-                        {
-                            Send("E002: This subscription exist");
-                            continue;
-                        }
-                        feed = new Subscription(parameters[0]);
-                        feed.GenerateToken();
-                        lock (Core.DB)
-                        {
-                            if (Core.DB.ContainsKey(parameters[0]))
-                            {
-                                Send("E002: This subscription exist");
-                                continue;
-                            }
-                            Core.DB.Add(parameters[0], feed);
-                            Send("TOKEN: " + feed.token);
-                            Core.Save();
-                        }
+                        Subscribe(line, parameters);
                         continue;
                     case "unsubscribe":
-                        if (parameters.Count < 2)
-                        {
-                            if (IsAuthenticated)
-                            {
-                                lock (Core.DB)
-                                {
-                                    if (!Core.DB.ContainsKey(subscription.Name))
-                                    {
-                                        Send("E007: No such feed");
-                                        continue;
-                                    }
-                                    Core.DB.Remove(subscription.Name);
-                                }
-                                subscription = null;
-                                Send("OK");
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            Subscription f2 = Subscription.login(parameters[0], parameters[1]);
-                            if (f2 != null)
-                            {
-                                lock (Core.DB)
-                                {
-                                    if (!Core.DB.ContainsKey(f2.Name))
-                                    {
-                                        Send("E007: No such feed");
-                                        continue;
-                                    }
-                                    Core.DB.Remove(f2.Name);
-                                }
-                                if (f2 == subscription)
-                                {
-                                    subscription = null;
-                                }
-                                Send("OK");
-                                continue;
-                            }
-                        }
-                        Send("E005: Invalid token or name");
+                        Unsubscribe(line, parameters);
                         continue;
                     case "auth":
                         if (parameters.Count == 2)
@@ -164,85 +263,10 @@ namespace dispatcherd
                         Send("E005: Invalid token or name");
                         continue;
                     case "insert":
-                        if (!IsAuthenticated)
-                        {
-                            Send("E020: Authentication was not completed");
-                            continue;
-                        }
-                        if (parameters.Count < 1)
-                        {
-                            Send("E008: Missing parameter for insert");
-                            continue;
-                        }
-                        List<FeedItem> InsertData;
-                        StringBuilder sb = new StringBuilder("");
-                        switch (parameters[0])
-                        {
-                            case "xml":
-                                while (!line.Contains("</items>"))
-                                {
-                                    line = streamReader.ReadLine();
-                                    sb.Append(line + "\n");
-                                }
-                                InsertData = Subscription.String2List(sb.ToString());
-                                if (InsertData == null)
-                                {
-                                    Send("E060: Invalid xml");
-                                    continue;
-                                }
-                                Send(subscription.Insert(InsertData).ToString());
-                                continue;
-                            case "json":
-                                InsertData = Subscription.JSON2List(sb.ToString());
-                                if (InsertData == null)
-                                {
-                                    Send("E062: Invalid JSON");
-                                    continue;
-                                }
-                                Send(subscription.Insert(InsertData).ToString());
-                                continue;
-                        }
-                        Send("E010: Unknown format of data");
+                        Insert(line, parameters);
                         continue;
                     case "remove":
-                        if (!IsAuthenticated)
-                        {
-                            Send("E020: Authentication was not completed");
-                            continue;
-                        }
-                        if (parameters.Count < 1)
-                        {
-                            Send("E008: Missing parameter for delete");
-                            continue;
-                        }
-                        List<FeedItem> RemoveData;
-                        StringBuilder sb02 = new StringBuilder("");
-                        switch (parameters[0])
-                        {
-                            case "xml":
-                                while (!line.Contains("</items>"))
-                                {
-                                    sb02.Append(line + "\n");
-                                }
-                                RemoveData = Subscription.String2List(sb02.ToString());
-                                if (RemoveData == null)
-                                {
-                                    Send("E060: Invalid xml");
-                                    continue;
-                                }
-                                Send(subscription.Delete(RemoveData).ToString());
-                                continue;
-                            case "json":
-                                RemoveData = Subscription.JSON2List(sb02.ToString());
-                                if (RemoveData == null)
-                                {
-                                    Send("E062: Invalid json");
-                                    continue;
-                                }
-                                Send(subscription.Delete(RemoveData).ToString());
-                                continue;
-                        }
-                        Send("E010-Unknown format of data");
+                        Remove(line, parameters);
                         continue;
                     case "list":
                         if (!IsAuthenticated)

@@ -34,8 +34,17 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>.\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="ServiceStack.Common">
+      <HintPath>.\ServiceStack.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Interfaces">
+      <HintPath>.\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
     <Reference Include="ServiceStack.Redis">
       <HintPath>.\ServiceStack.Redis.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>.\ServiceStack.Text.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />

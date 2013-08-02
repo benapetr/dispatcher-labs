@@ -54,6 +54,11 @@ namespace dispatcherd
         /// </summary>
         public static bool SaveNeeded = false;
 
+        /// <summary>
+        /// Display a debug log, if the current verbosity is lower than required, it's not displayed
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="Verbosity"></param>
         public static void DebugLog(string text, int Verbosity = 1)
         {
             if (Verbosity <= Configuration.System.Verbosity)

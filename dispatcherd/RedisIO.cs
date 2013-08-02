@@ -69,6 +69,11 @@ namespace dispatcherd
                     + diff.Summary;
         }
 
+        /// <summary>
+        /// Convert a string to byte
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
         private static byte[] GetBytes(string str)
         {
             byte[] bytes = new byte[str.Length * sizeof(char)];
@@ -86,7 +91,14 @@ namespace dispatcherd
         {
             string data = Format2Redis(diff, subscription.format, wiki);
             Core.DebugLog("Sending to redis: Q " + subscription.Name + ": " + data, 6);
-            Core.redis.LPush(subscription.Name, GetBytes(data));
+            try
+            {
+                Core.redis.LPush(subscription.Name, GetBytes(data));
+            }
+            catch (Exception fail)
+            {
+                Core.Log("ERROR - unable to insert data to redis: " + fail.ToString());
+            }
         }
     }
 }
