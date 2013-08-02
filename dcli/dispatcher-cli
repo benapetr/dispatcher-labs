@@ -68,7 +68,7 @@ parser.add_argument('--user', dest='user', help='Username to watch')
 parser.add_argument('--list', dest='list', help='List all items in a subscription')
 parser.add_argument('--verbosity', dest='verbosity', type=int, help='Higher the number is, more verbose I will be')
 parser.add_argument('--userrx', dest='ux', help='Regular expression that username should match')
-parser.add_argument('--alter', dest='alter' help= Allow you to alter configuration of subscription')
+parser.add_argument('--alter', dest='alter' help='Allow you to alter configuration of subscription')
 parser.add_argument('--format', dest='format' help='Let you specify which format you want to have for output you can choose from xml, pipe, json')
 
 args = parser.parse_args()
