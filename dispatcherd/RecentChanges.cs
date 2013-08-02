@@ -413,7 +413,6 @@ namespace dispatcherd
                     break;
                 }
                 Traffic(line, true);
-
                 if (line.Contains(" PRIVMSG "))
                 {
                     string channel = line.Substring(line.IndexOf(" PRIVMSG ") + 9);
@@ -441,6 +440,7 @@ namespace dispatcherd
                     {
                         subscriptiondata.AddRange(Core.DB.Values);
                     }
+                    Core.DebugLog("Processing line: " + line, 18);
                     foreach (Subscription subscription in subscriptiondata)
                     {
                         lock (subscription.Items)
