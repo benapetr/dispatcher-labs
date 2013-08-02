@@ -397,6 +397,7 @@ namespace dispatcherd
             string nick = "bd_" + DateTime.Now.ToBinary().ToString().Substring(8);
             IRC irc = new IRC(nick, 6667, "irc.wikimedia.org");
             irc.Connect();
+            Core.DebugLog("Joining all channels", 2);
             lock (Core.WD)
             {
                 foreach (Wiki xx in Core.WD.Values)
@@ -405,6 +406,7 @@ namespace dispatcherd
                     Thread.Sleep(200);
                 }
             }
+            Core.DebugLog("Reading data");
             while (Core.IsRunning && irc.Connected)
             {
                 string line = irc.ReadLine();
@@ -423,7 +425,7 @@ namespace dispatcherd
                     }
                     channel = line.Substring(0, line.IndexOf(" "));
                     Wiki wiki = getWiki(channel);
-                    Core.DebugLog("Resolving wiki: " + channel, 14);
+                    Core.DebugLog("Resolving wiki: " + channel, 15);
                     if (wiki == null)
                     {
                         Core.DebugLog("Error " + channel);
