@@ -79,7 +79,7 @@ namespace dispatcherd
         {
             string data = Format2Redis(diff, subscription.format, wiki);
             Core.DebugLog("Sending to redis: Q " + subscription.Name + ": " + data, 6);
-            Core.redis.LeftPush(subscription.Name, data);
+            Core.redis.RightPush(subscription.Name, data);
         }
     }
 }
