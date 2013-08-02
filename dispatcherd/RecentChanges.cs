@@ -423,6 +423,7 @@ namespace dispatcherd
                     }
                     channel = line.Substring(0, line.IndexOf(" "));
                     Wiki wiki = getWiki(channel);
+                    Core.DebugLog("Resolving wiki: " + channel, 14);
                     if (wiki == null)
                     {
                         Core.DebugLog("Error " + channel);
