@@ -68,6 +68,8 @@ parser.add_argument('--user', dest='user', help='Username to watch')
 parser.add_argument('--list', dest='list', help='List all items in a subscription')
 parser.add_argument('--verbosity', dest='verbosity', type=int, help='Higher the number is, more verbose I will be')
 parser.add_argument('--userrx', dest='ux', help='Regular expression that username should match')
+parser.add_argument('--alter', dest='alter' help= Allow you to alter configuration of subscription')
+parser.add_argument('--format', dest='format' help='Let you specify which format you want to have for output you can choose from xml, pipe, json')
 
 args = parser.parse_args()
 if not type(args.verbosity) is int:
@@ -112,6 +114,10 @@ if type(args.subscription) is str:
         _socket.connect((DispatcherHost, DispatcherPort))
         _socket.send("subscribe " + args.subscription + "\n")
         print _socket.recv(256);
+        if str is type(args.format):
+            print "Changing a format"
+            _socket.send("format " + args.format);
+            print _socket.recv(256)
         _socket.close()
         sys.exit(0);
 
@@ -126,6 +132,22 @@ if type(args.un_subscription) is str:
         print _socket.recv(256)
         _socket.close()
         sys.exit(0)
+
+if type(args.alter) is str:
+    if not type(args.token) is str:
+        print "You need to provide a token for this"
+        sys.exit(-1)
+    print "Logging to a subscription"
+    _socket = socket.socket();
+    _socket.connect((DispatcherHost, DispatcherPort))
+    Login(_socket, args.insert, args)
+    print "Attempting to alter " + args.alter
+    if str is type(args.format):
+        print "Changing a format"
+        _socket.send("format " + args.format);
+        print _socket.recv(256)
+    _socket.close()
+    sys.exit(0)
 
 
 print "You need to provide some arguments, see --help"
