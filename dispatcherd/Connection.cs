@@ -302,7 +302,9 @@ namespace dispatcherd
                         Send("E012: Invalid format");
                         continue;
                     case "info":
-                        Send("I have " + Terminal.Connections.ToString() + " connections and " + Core.DB.Count.ToString() + " subscriptions, I am now watching " + Core.WD.Count.ToString() + " wikis");
+                        Send("I have " + Terminal.Connections.ToString() + " connections and "
+                            + Core.DB.Count.ToString() + " subscriptions, I am now watching " + Core.WD.Count.ToString() + " wikis\n"
+                            + "I parsed " + RecentChanges.Parsed.ToString() + " irc messages from irc.wikimedia.org and sent " + RedisIO.Sent.ToString() + " data to redis\n");
                         continue;
                     default:
                         Send("E006: Command not understood");

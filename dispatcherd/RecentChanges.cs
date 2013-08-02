@@ -131,6 +131,8 @@ namespace dispatcherd
         /// </summary>
         private static Thread thread;
 
+        public static uint Parsed = 0;
+
         private static bool working = false;
         public static bool IsWorking
         {
@@ -410,6 +412,7 @@ namespace dispatcherd
             while (Core.IsRunning && irc.Connected)
             {
                 string line = irc.ReadLine();
+                Parsed++;
                 if (line == null)
                 {
                     break;

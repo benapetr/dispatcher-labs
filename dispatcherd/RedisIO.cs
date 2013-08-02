@@ -20,6 +20,8 @@ namespace dispatcherd
     /// </summary>
     class RedisIO
     {
+        public static uint Sent = 0;
+
         /// <summary>
         /// This function will take the diff and convert it to format that user specified in their subscription
         /// </summary>
@@ -94,6 +96,7 @@ namespace dispatcherd
             try
             {
                 Core.redis.LPush(subscription.Name, GetBytes(data));
+                Sent++;
             }
             catch (Exception fail)
             {
